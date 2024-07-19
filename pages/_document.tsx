@@ -17,8 +17,8 @@ export default function Document() {
     const file = fs.readFileSync("./public/web/viewer.html", "utf8");
     const $ = cheerio.load(file);
     const bodyStr = $("body").html();
+    // const bodyStr = $.html($("body"));
     const headElements = $("link, script");
-    // const scriptElements = $("script");
 
     bodyStr && setBody(bodyStr);
 
@@ -29,9 +29,20 @@ export default function Document() {
     });
 
     setHead(headHtmlArray);
-    // console.log($("link").html());
+    console.log(body);
+    // почему-то body выглялит вот так:
+    // <body tabindex="1">
 
-    // console.log(scryptsStr);
+    // <meta charset="utf-8">
+    // <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    // <meta name="google" content="notranslate">
+    // <title>PDF.js viewer</title>
+    // <link rel="resource" type="application/l10n" href="locale/locale.json">
+    // <script src="../build/pdf.mjs" type="module"></script>
+
+    // <link rel="stylesheet" href="viewer.css">
+
+    // <script src="viewer.mjs" type="module"></script>
   } catch (error) {
     console.error("error");
   }
@@ -39,10 +50,9 @@ export default function Document() {
   return (
     <Html>
       <Head>
-        {/* {scriptObj && parse(scriptObj)} */}
         {head && head.map((item) => parse(item))}
       </Head>
-      <body>
+      {/* <body> */}
         {body &&
           parse(body.replace('selected="selected"', 'defaultValue="selected"'))}
 
@@ -52,8 +62,7 @@ export default function Document() {
         {/* .replace('selected="selected"', 'defaultValue="selected"') */}
         <Main />
         <NextScript />
-      </body>
+      {/* </body> */}
     </Html>
-    // cheerio скрипты, body, link
   );
 }
