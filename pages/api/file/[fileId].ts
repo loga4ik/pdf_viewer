@@ -2,6 +2,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import fs from "fs";
 import * as pdfjs from "pdfjs-dist";
 
+type LinkType = {
+  str: string;
+  url: string | null;
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -16,44 +21,69 @@ export default async function handler(
   }
 
   const file = fs.readFileSync(filePath);
-  const uint8Array = new Uint8Array(file);
+  
+  // const uint8Array = new Uint8Array(file);
+  // console.log(uint8Array);
 
-  console.log(1);
-  const pdf = await pdfjs.getDocument({ data: uint8Array }).promise;
+  // const pdf = await pdfjs.getDocument({ data: uint8Array }).promise;
 
-  const numPages = pdf.numPages;
-  const links: string[] = [];
-  let body = "";
-  const scripts: string[] = [];
+  // const links: LinkType[] = [];
+  // let body = "";
+  // const scripts: string[] = [];
+  // const page1 = await pdf.getPage(1);
+  // for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+  //   const page = await pdf.getPage(pageNum);
+  //   const textContent = await page.getTextContent();
 
-  for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-    const page = await pdf.getPage(pageNum);
-    const textContent = await page.getTextContent();
-    console.log(page);
+  //   textContent.items.forEach((item: any) => {
+  //     // console.log(typeof(item));
+  //     // console.log(page);
 
-    // Собираем текст
-    textContent.items.forEach((item: any) => {
-      if ("str" in item) {
-        body += item.str + " ";
-      }
-    });
+  //     if ("str" in item) {
+  //       body += item.str + " ";
+  //     }
+  //   });
 
-    const annotations = await page.getAnnotations();
-    annotations.forEach((annotation) => {
-      if (annotation.url) {
-        links.push(annotation.url);
-      }
+  //   const annotations = await page.getAnnotations();
+  //   annotations.forEach((annotation) => {
+  //     // console.log(annotation.dest);
 
-      // console.log(2);
-      // console.log(annotation);
-      if (annotation.subtype === "Widget" && annotation.actions) {
-        const actions = annotation.actions;
-        if (actions.A && actions.A.S === "JavaScript") {
-          scripts.push(actions.A.JS);
-        }
-      }
-    });
-  }
+  //     //get urls
+  //     if (annotation.url) {
+  //       const link = { str: annotation.contentsObj.str, url: annotation.url };
+  //       links.push(link);
+  //     }
 
-  res.status(200).json({ body, links, scripts });
+  //     //get scripts
+  //     if (annotation.subtype === "Link" || annotation.subtype === "Widget") {
+  //       const actions = annotation.actions;
+  //       // console.log(actions);
+
+  //       // if (actions.A && actions.A.S === "JavaScript") {
+  //       //   scripts.push(actions.A.JS);
+  //       // }
+  // }
+  // });
+  // const viewport = page.getViewport({ scale: 1.5 });
+  // const viewerContainer = useRef<HTMLDivElement>(null);
+  // const container = viewerContainer.current;
+  // const canvas = document.createElement("canvas");
+  // const canvasContext = canvas.getContext("2d");
+  // if (canvasContext) {
+  //   canvas.height = viewport.height;
+  //   canvas.width = viewport.width;
+
+  //   page
+  //     .render({
+  //       canvasContext: canvasContext as CanvasRenderingContext2D,
+  //       viewport,
+  //     })
+  //     .promise.then(() => {
+  //       if (container) container.appendChild(canvas);
+  //     });
+  // }
+  // }
+
+  res.status(200).setHeader("Content-Type", "application/pdf").send(file);
+  // res.status(200).json({ body, links, scripts });
 }
