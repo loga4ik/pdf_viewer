@@ -1,0 +1,1 @@
+//сделать запрос http://rubin.kodeks.ru:888/db/next/graphql

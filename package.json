@@ -11,11 +11,12 @@
   "dependencies": {
     "@types/cheerio": "^0.22.35",
     "@types/pdf-parse": "^1.1.4",
+    "@types/pdfjs-dist": "^2.10.378",
     "cheerio": "^1.0.0-rc.12",
     "cherio": "^1.0.0-rc.2",
     "fs": "^0.0.1-security",
     "html-react-parser": "^5.1.12",
-    "next": "14.2.5",
+    "next": "13.5.6",
     "pdf-parse": "^1.1.1",
     "pdfjs-dist": "^3.11.174",
     "react": "^18",
@@ -27,7 +28,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
-    "eslint-config-next": "14.2.5",
+    "eslint-config-next": "13.5.6",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
