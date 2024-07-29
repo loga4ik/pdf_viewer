@@ -1,12 +1,9 @@
 import * as pdfjs from "pdfjs-dist";
-export interface PdfLinkAnnotation {
+export interface PdfLink {
   id: string;
-  url: string | null;
+  link: string;
 }
 
-export interface PdfLinks {
-  [key: string]: PdfLinkAnnotation;
-}
 
 // pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 //   '/node_modules/pdfjs-dist/build/pdf.worker.min.mjs',
@@ -33,7 +30,7 @@ export default async function getPdfAnnotations(fileName: string) {
     const pdfDocument = await pdfjs.getDocument({ data: fileBuffer }).promise;
 
     const numPages = pdfDocument.numPages;
-    const links: object[] = [];
+    const links: PdfLink[] = [];
 
     // Перебор всех страниц
     for (let i = 1; i <= numPages; i++) {
@@ -44,7 +41,7 @@ export default async function getPdfAnnotations(fileName: string) {
       annotations.forEach((annotation) => {
         if (annotation.subtype === "Link") {
           const link = { id: annotation.id, link: annotation.unsafeUrl };
-          console.log(annotation.id, annotation.unsafeUrl);
+          // console.log(annotation.id, annotation.unsafeUrl);
           links.push(link);
         }
       });

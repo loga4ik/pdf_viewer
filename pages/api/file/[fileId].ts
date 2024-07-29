@@ -1,11 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import * as pdfjs from "pdfjs-dist";
 
-type LinkType = {
-  str: string;
-  url: string | null;
-};
-
 const getFile = async (filePath: string) => {
   try {
     const res = await fetch(filePath);

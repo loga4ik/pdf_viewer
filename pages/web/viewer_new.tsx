@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Link from "../../components/Link";
 import * as pdfjs from "pdfjs-dist";
 import { useSearchParams } from "next/navigation";
-import getPdfAnnotations from "@/src/getPdfAnnotations";
+import getPdfAnnotations, { PdfLink } from "@/src/getPdfAnnotations";
 //получить файлID через route
 //dataAnotationId (проверить наличие)
 //если есть ссылки(dataAnotationId) то идем дальше
@@ -20,6 +20,7 @@ const extractFileId = (url: string | null) => {
 export default function handler() {
   // const fileId = req.query.file as string;
   const [isLinkDoc, setIsLinkDoc] = useState(false);
+  const [linkArr, setLinkArr] = useState<PdfLink[]>();
   const searchParams = useSearchParams();
   const fileName = extractFileId(searchParams.get("file"));
   // const file = searchParams.get("file");
@@ -33,23 +34,30 @@ export default function handler() {
 
       section.length && setIsLinkDoc(true);
       // console.log(section.length);
-    }, 2000);
+    }, 4000);
     //используем useEffect так как нам необходимо дождаться отрисовки страници
   }, [fileName]);
   useEffect(() => {
-    console.log(isLinkDoc, fileName);
     if (isLinkDoc && fileName) {
       (async () => {
         pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-          'pdfjs-dist/build/pdf.worker.min.js',
-          import.meta.url,
-        ).toString()
+          "pdfjs-dist/build/pdf.worker.min.js",
+          import.meta.url
+        ).toString();
         const links = await getPdfAnnotations(fileName);
-        console.log(links);
+        links.length && setLinkArr(links);
+        // console.log(links);
+
+        // if (links.length) {
+        //   console.log(links);
+        //   setLinkArr(links);
+        //   console.log(linkArr);
+        // }
       })();
     }
   }, [isLinkDoc]);
-  return isLinkDoc && <Link />;
+  // console.log(isLinkDoc, fileName);
+  return isLinkDoc && <Link links={linkArr} />;
 }
 //в ts ошибка  Link' refers to a value, but is being used as a type here. Did you mean 'typeof Link'?
 //поэтому меняем на tsx
