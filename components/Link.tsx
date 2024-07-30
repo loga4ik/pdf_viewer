@@ -1,26 +1,33 @@
 //viewerContainer обработчик событий
 //отписаться от слушателей
 import { PdfLink } from "@/src/getPdfAnnotations";
-import React, { useEffect } from "react";
+import useChangeColor from "@/src/Hooks/useChangeColor";
+import React, { useEffect, useState } from "react";
 type Props = {
   links: PdfLink[] | undefined;
 };
 const Link: React.FC<Props> = ({ links }) => {
-  console.log(links);
+  const { startHover, endHover, isHovered } = useChangeColor();
+  const [annotationEventLeave, setAnnotationEventLeave] = useState();
+  const [annotationElement, setAnnotationElement] = useState<HTMLElement>();
   const viewerContainer = document.querySelector("#viewerContainer");
   useEffect(() => {
-    console.log(viewerContainer);
-
     const listener = viewerContainer?.addEventListener(
       "mouseenter",
       (e) => {
         const target = e.target as HTMLElement;
         if (target.hasAttribute("data-annotation-id")) {
-          console.log(
-            "data-annotation-id = ",
-            target.getAttribute("data-annotation-id")
-          );
-          console.log(target);
+          // console.log(
+          //   "data-annotation-id = ",
+          //   target.getAttribute("data-annotation-id")
+          // );
+          setAnnotationElement(target);
+          startHover();
+          setAnnotationEventLeave(() => {
+            target.addEventListener("mouseleave", () => {
+              endHover();
+            });
+          });
         }
       },
       true
@@ -29,9 +36,18 @@ const Link: React.FC<Props> = ({ links }) => {
       if (viewerContainer && listener) {
         viewerContainer.removeEventListener("mouseenter", listener);
       }
+      if (annotationElement && annotationEventLeave) {
+        annotationElement.removeEventListener(
+          "mouseenter",
+          annotationEventLeave
+        );
+      }
     };
-  }, [viewerContainer]);
+  }, [viewerContainer, annotationEventLeave]);
 
+  useEffect(() => {
+    console.log(isHovered);
+  }, [isHovered]);
   return <div>Link</div>;
 };
 
