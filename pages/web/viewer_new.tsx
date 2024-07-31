@@ -3,61 +3,62 @@ import Link from "../../components/Link";
 import * as pdfjs from "pdfjs-dist";
 import { useSearchParams } from "next/navigation";
 import getPdfAnnotations, { PdfLink } from "@/src/getPdfAnnotations";
-//получить файлID через route
-//dataAnotationId (проверить наличие)
-//если есть ссылки(dataAnotationId) то идем дальше
-//вернем ссылку нового компанента ссылки (создать новый компанент)
 
-//pdfjs-dist достаем все ссылки (почитать буфер и стрим)
-
-//положить ссылки в useState
 const extractFileId = (url: string | null) => {
   if (!url) return null;
   const parts = url.split("/");
   return parts[parts.length - 1];
 };
 
-export default function handler() {
-  // const fileId = req.query.file as string;
+export default function Handler() {
   const [isLinkDoc, setIsLinkDoc] = useState(false);
-  const [linkArr, setLinkArr] = useState<PdfLink[]>();
+  const [linkArr, setLinkArr] = useState<PdfLink[]>([]);
   const searchParams = useSearchParams();
   const fileName = extractFileId(searchParams.get("file"));
-  // const file = searchParams.get("file");
-  // console.log(searchParams.get("file"));
 
   useEffect(() => {
-    //переписать setTimeout обязательно
-    setTimeout(() => {
-      const section = document.querySelectorAll("section");
-      console.log(section);
+    const viewerContainer = document.querySelector("#viewerContainer");
+    if (fileName) {
+      const observer = new MutationObserver(() => {
+        //MutationObserver следит за обновлениями в dom
+        const section = document.querySelectorAll(
+          "section[data-annotation-id]"
+        );
+        if (section.length) {
+          setIsLinkDoc(true);
+          observer.disconnect(); // больше не следит
+        }
+      });
 
-      section.length && setIsLinkDoc(true);
-      // console.log(section.length);
-    }, 4000);
-    //используем useEffect так как нам необходимо дождаться отрисовки страници
+      viewerContainer &&
+        observer.observe(viewerContainer, {
+          //настраиваем за какими элементами следим
+          childList: true,
+          // список дочерних элементов
+          subtree: true,
+          // все элементы, вложенные в дочерние (вся ветка)
+        });
+
+      // и тут больше не следит
+      return () => observer.disconnect();
+    }
   }, [fileName]);
+
   useEffect(() => {
     if (isLinkDoc && fileName) {
       (async () => {
+        // тут мы собираем правильный url для pdf.js
         pdfjs.GlobalWorkerOptions.workerSrc = new URL(
           "pdfjs-dist/build/pdf.worker.min.js",
-          import.meta.url
+          import.meta.url // ссылка на текущий файл
         ).toString();
         const links = await getPdfAnnotations(fileName);
-        links.length && setLinkArr(links);
-        // console.log(links);
-
-        // if (links.length) {
-        //   console.log(links);
-        //   setLinkArr(links);
-        //   console.log(linkArr);
-        // }
+        if (links.length) {
+          setLinkArr(links);
+        }
       })();
     }
-  }, [isLinkDoc]);
-  // console.log(isLinkDoc, fileName);
-  return isLinkDoc && <Link links={linkArr} />;
+  }, [isLinkDoc, fileName]);
+
+  return isLinkDoc ? <Link links={linkArr} /> : null;
 }
-//в ts ошибка  Link' refers to a value, but is being used as a type here. Did you mean 'typeof Link'?
-//поэтому меняем на tsx

@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import * as pdfjs from "pdfjs-dist";
 
 const getFile = async (filePath: string) => {
   try {

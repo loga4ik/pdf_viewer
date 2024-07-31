@@ -16,11 +16,11 @@ const Link: React.FC<Props> = ({ links }) => {
       "mouseenter",
       (e) => {
         const target = e.target as HTMLElement;
-        if (target.hasAttribute("data-annotation-id")) {
-          // console.log(
-          //   "data-annotation-id = ",
-          //   target.getAttribute("data-annotation-id")
-          // );
+          if (target.hasAttribute("data-annotation-id")) {
+            // console.log(
+            //   "data-annotation-id = ",
+            //   target.getAttribute("data-annotation-id")
+            // );
           setAnnotationElement(target);
           startHover();
           setAnnotationEventLeave(() => {

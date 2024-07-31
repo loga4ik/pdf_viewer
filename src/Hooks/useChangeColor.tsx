@@ -8,7 +8,7 @@ function useChangeColor() {
   const startHover = () => {
     timeout = setTimeout(() => {
       setIsHovered(true);
-    }, 300);
+    }, 500);
   };
 
   const endHover = () => {

@@ -1,17 +1,9 @@
 import * as pdfjs from "pdfjs-dist";
+
 export interface PdfLink {
   id: string;
   link: string;
 }
-
-
-// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-//   '/node_modules/pdfjs-dist/build/pdf.worker.min.mjs',
-//   import.meta.url,
-// ).toString();
-// Укажите путь к воркеру PDF.js как обычному JavaScript файлу
-// pdfjs.GlobalWorkerOptions.workerSrc =
-//   "/node_modules/pdfjs-dist/build/pdf.worker.js";
 
 const getFileBuffer = async (filePath: string): Promise<Buffer> => {
   const res = await fetch(filePath);
@@ -32,16 +24,13 @@ export default async function getPdfAnnotations(fileName: string) {
     const numPages = pdfDocument.numPages;
     const links: PdfLink[] = [];
 
-    // Перебор всех страниц
     for (let i = 1; i <= numPages; i++) {
       const page = await pdfDocument.getPage(i);
       const annotations = await page.getAnnotations();
 
-      // Перебор всех аннотаций страницы
       annotations.forEach((annotation) => {
         if (annotation.subtype === "Link") {
           const link = { id: annotation.id, link: annotation.unsafeUrl };
-          // console.log(annotation.id, annotation.unsafeUrl);
           links.push(link);
         }
       });
