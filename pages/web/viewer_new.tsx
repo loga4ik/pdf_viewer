@@ -9,10 +9,10 @@ const extractFileId = (url: string | null) => {
   const parts = url.split("/");
   return parts[parts.length - 1];
 };
-
+//не handler a viewerNew
 export default function Handler() {
   const [isLinkDoc, setIsLinkDoc] = useState(false);
-  const [linkArr, setLinkArr] = useState<PdfLink[]>([]);
+  // const [linkArr, setLinkArr] = useState<PdfLink[]>([]);
   const searchParams = useSearchParams();
   const fileName = extractFileId(searchParams.get("file"));
 
@@ -50,15 +50,12 @@ export default function Handler() {
         // тут мы собираем правильный url для pdf.js
         pdfjs.GlobalWorkerOptions.workerSrc = new URL(
           "pdfjs-dist/build/pdf.worker.min.js",
-          import.meta.url // ссылка на текущий файл
+          import.meta.url
         ).toString();
-        const links = await getPdfAnnotations(fileName);
-        if (links.length) {
-          setLinkArr(links);
-        }
       })();
     }
   }, [isLinkDoc, fileName]);
 
-  return isLinkDoc ? <Link links={linkArr} /> : null;
+  return isLinkDoc && fileName && <Link fileId={fileName} />;
+  // в link передавать fileName
 }

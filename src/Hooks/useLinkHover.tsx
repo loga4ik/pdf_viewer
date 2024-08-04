@@ -1,19 +1,19 @@
 import { useState, useEffect } from "react";
 
-function useChangeColor() {
-  const [isHovered, setIsHovered] = useState(false);
+function useLinkHover() {
+  const [isHovered, setIsHovered] = useState<string | null>(null);
 
   let timeout: ReturnType<typeof setTimeout>;
 
-  const startHover = () => {
+  const startHover = (dataAnnotationId: string) => {
     timeout = setTimeout(() => {
-      setIsHovered(true);
+    setIsHovered(dataAnnotationId);
     }, 500);
   };
 
   const endHover = () => {
     clearTimeout(timeout);
-    setIsHovered(false);
+    setIsHovered(null);
   };
 
   // мы используем кастомный хук, для clearTimeout(timeout)
@@ -30,4 +30,4 @@ function useChangeColor() {
   };
 }
 
-export default useChangeColor;
+export default useLinkHover;
