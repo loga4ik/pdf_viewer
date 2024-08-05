@@ -8,21 +8,20 @@ type Props = {
   // links: PdfLink[] | undefined;
 };
 const Link: React.FC<Props> = ({ fileId }) => {
-  // console.log(fileId);
 
   const asyncGetPdfAnnotations = async () => {
     const links = await getPdfAnnotations(fileId);
     setLinkArr(links);
   };
 
-  const { startHover, endHover, isHovered } = useLinkHover();
+  const { startHover, endHover, url } = useLinkHover();
   const [annotationElement, setAnnotationElement] = useState<HTMLElement>();
   const [linkArr, setLinkArr] = useState<PdfLink[]>([]);
   const [docDetails, setDocDetails] = useState<string>();
   const viewerContainer = document.querySelector("#viewerContainer");
 
-  const asyncGetLinkTitle = async (isHovered: string) => {
-    setDocDetails(await getLinkTitle(isHovered));
+  const asyncGetLinkTitle = async (url: string) => {
+    setDocDetails(await getLinkTitle(url));
   };
   const annotationEventLeave = () => {
     endHover();
@@ -36,7 +35,6 @@ const Link: React.FC<Props> = ({ fileId }) => {
       target.hasAttribute("data-annotation-id") &&
       target.getAttribute("class") === "linkAnnotation"
     ) {
-      console.log(target);
       setAnnotationElement(target);
       const dataAnnotationId = target.getAttribute("data-annotation-id");
 
@@ -75,20 +73,20 @@ const Link: React.FC<Props> = ({ fileId }) => {
   }, [fileId]);
 
   useEffect(() => {
-    if (isHovered) {
-      asyncGetLinkTitle(isHovered);
+    if (url) {
+      asyncGetLinkTitle(url);
     }
-  }, [isHovered]);
+  }, [url]);
 
   useEffect(() => {
-    console.log(annotationElement, docDetails);
-  }, [annotationElement, docDetails]);
+  }, [ docDetails]);
 
   // вызов getLinkTitle если есть ссылка на док в state
   // getLinkTitle вернет строку, кладем ее в state
   // создать LinkPreview() передать описание ссылки, html-элемент (по умолчанию внизу)
   return (
     // <div></div>
+
     annotationElement &&
     docDetails && (
       <LinkPreview

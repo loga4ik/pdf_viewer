@@ -72,7 +72,6 @@ export default async function getLinkTitle(url: string) {
   if (!url.startsWith("kodeks")) {
     return "ссылка ведет на сторонние источники";
   }
-  // console.log();
   const nd = extractNdFromLink(url);
 
   // + сделать проверку на kodex (провалидировать ссылку)
@@ -87,10 +86,9 @@ export default async function getLinkTitle(url: string) {
   if (result.ok && result.data.foundDocumentById.length) {
     // result.data;
     const docReg = result.data.foundDocumentById[0].registrations[0];
-
     res = formatRegs(docReg);
+  } else {
+    res = "нет данных";
   }
-  console.log(result);
-
   return res;
 }

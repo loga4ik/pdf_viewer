@@ -1,19 +1,19 @@
 import { useState, useEffect } from "react";
 
 function useLinkHover() {
-  const [isHovered, setIsHovered] = useState<string | null>(null);
+  const [url, seturl] = useState<string | null>(null);
 
   let timeout: ReturnType<typeof setTimeout>;
 
   const startHover = (dataAnnotationId: string) => {
     timeout = setTimeout(() => {
-    setIsHovered(dataAnnotationId);
+    seturl(dataAnnotationId);
     }, 500);
   };
 
   const endHover = () => {
     clearTimeout(timeout);
-    setIsHovered(null);
+    seturl(null);
   };
 
   // мы используем кастомный хук, для clearTimeout(timeout)
@@ -26,7 +26,7 @@ function useLinkHover() {
   return {
     startHover,
     endHover,
-    isHovered,
+    url,
   };
 }
 
