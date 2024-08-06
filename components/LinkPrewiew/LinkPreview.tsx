@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import styles from "./LinkPrewiew.module.css";
+import ReactDOM from "react-dom";
 type Props = {
   annotationElement: HTMLElement;
   docDetails: string;
@@ -7,32 +8,24 @@ type Props = {
 
 const LinkPreview: React.FC<Props> = ({ annotationElement, docDetails }) => {
   useEffect(() => {
-    // Создаем новый элемент div и задаем его содержимое
-    const divDetails = document.createElement("div");
-    divDetails.innerHTML = docDetails;
-    divDetails.classList.add(styles.divDetails, styles.top);
     annotationElement.classList.add(styles.detailsWrapper);
-
-    if (annotationElement.getBoundingClientRect().top > 60) {
-      divDetails.classList.add(styles.top);
-    } else {
-      divDetails.classList.add(styles.bottom);
-    }
-
-    // Проверяем, что annotationElement существует, и добавляем divDetails в него
-    if (annotationElement) {
-      annotationElement.appendChild(divDetails);
-    }
-
-    // Убираем divDetails при размонтировании компонента
     return () => {
-      if (annotationElement) {
-        annotationElement.removeChild(divDetails);
-      }
+      annotationElement.classList.remove(styles.detailsWrapper);
     };
   }, [annotationElement, docDetails]);
 
-  return <div>LinkPreview</div>;
+  return ReactDOM.createPortal(
+    <div
+      className={`${styles.divDetails} ${
+        annotationElement.getBoundingClientRect().top > 60
+          ? styles.top
+          : styles.bottom
+      }`}
+    >
+      {docDetails}
+    </div>,
+    annotationElement
+  );
 };
 
 export default LinkPreview;
